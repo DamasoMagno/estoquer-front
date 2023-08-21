@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { Order } from "../order";
+import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -64,11 +65,11 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
+      const orderFinished = row.getValue("status") !== "finalizado";
+
       return (
         <Badge
-          className={`${
-            row.getValue("status") === "finalizado" ? "bg-black" : "bg-red-500"
-          }`}
+          className={cn({ "bg-red-500": orderFinished})}
         >
           {row.getValue("status")}
         </Badge>
@@ -77,10 +78,10 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Ações",
+    header: () => <p className="text-center">Ações</p>,
     cell: () => {
       return (
-        <div className="flex items-center justify">
+        <div className="flex items-center justify-center">
           <Order>
             <Button variant="ghost">
               <Edit size={18} />
