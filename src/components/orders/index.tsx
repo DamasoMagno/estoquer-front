@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   ColumnFiltersState,
+  getSortedRowModel,
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -38,6 +39,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnFilters,
       globalFilter: filter,
@@ -46,7 +48,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="mt-8">
-      <div className="rounded-md border">
+      <div className="rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

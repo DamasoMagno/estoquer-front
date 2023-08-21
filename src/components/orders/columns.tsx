@@ -1,10 +1,13 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Trash } from "lucide-react";
 import { Payment } from "@/types";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "../ui/button";
+import { Order } from "../order";
 
 export const columns: ColumnDef<Payment>[] = [
   {
@@ -63,12 +66,30 @@ export const columns: ColumnDef<Payment>[] = [
     cell: ({ row }) => {
       return (
         <Badge
-          color={
-            row.getValue("status") === "success" ? "success" : "text-red-500"
-          }
+          className={`${
+            row.getValue("status") === "finalizado" ? "bg-black" : "bg-red-500"
+          }`}
         >
           {row.getValue("status")}
         </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: "Ações",
+    cell: () => {
+      return (
+        <div className="flex items-center justify">
+          <Order>
+            <Button variant="ghost">
+              <Edit size={18} />
+            </Button>
+          </Order>
+          <Button variant="ghost">
+            <Trash size={18} />
+          </Button>
+        </div>
       );
     },
   },
