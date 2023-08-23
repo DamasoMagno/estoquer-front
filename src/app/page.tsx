@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
@@ -10,9 +10,11 @@ import { columns } from "../components/orders/columns";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Order } from "@/components/order";
+import { useModal } from "@/contexts/useModal";
 
 export default function Home() {
+  const { setModalState } = useModal();
+
   const router = useRouter();
   const [filter, setFilter] = useState("");
 
@@ -56,9 +58,10 @@ export default function Home() {
             placeholder="Buscar pedido"
             onChange={(e) => setFilter(e.target.value)}
           />
-          <Order>
-            <Button className="sm:w-48">Novo pedido</Button>
-          </Order>
+
+          <Button className="sm:w-48" onClick={() => setModalState("open")}>
+            Novo pedido
+          </Button>
         </div>
 
         <DataTable columns={columns} filter={filter} data={payments} />

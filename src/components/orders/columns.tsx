@@ -7,7 +7,6 @@ import { Payment } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
-import { Order } from "../order";
 import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<Payment>[] = [
@@ -31,10 +30,10 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "pedid",
+    accessorKey: "pedido",
     header: "Pedido",
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("pedid")}</div>
+      <div className="text-left font-medium">{row.getValue("pedido")}</div>
     ),
   },
   {
@@ -68,9 +67,7 @@ export const columns: ColumnDef<Payment>[] = [
       const orderFinished = row.getValue("status") !== "finalizado";
 
       return (
-        <Badge
-          className={cn({ "bg-red-500": orderFinished})}
-        >
+        <Badge className={cn({ "bg-red-500": orderFinished })}>
           {row.getValue("status")}
         </Badge>
       );
@@ -79,14 +76,15 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "actions",
     header: () => <p className="text-center">Ações</p>,
-    cell: () => {
+    cell: ({ row, table: { options } }) => {
       return (
         <div className="flex items-center justify-center">
-          <Order>
-            <Button variant="ghost">
-              <Edit size={18} />
-            </Button>
-          </Order>
+          <Button
+            variant="ghost"
+            onClick={() => options.meta?.onSetModalContentId(row.original.id)}
+          >
+            <Edit size={18} />
+          </Button>
           <Button variant="ghost">
             <Trash size={18} />
           </Button>

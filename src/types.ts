@@ -3,5 +3,6 @@ export type Payment = {
   amount: number;
   status: "pendente" | "finalizado";
   clientName: string;
-  pedid: string;
+  onSetModalContentId?: (id: string) => void;
+  pedido: string;
 };

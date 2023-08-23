@@ -2,13 +2,13 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -21,7 +21,8 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
-import { ReactNode } from "react";
+import { useModal } from "@/contexts/useModal";
+import { payments } from "../../../database";
 
 const orderSchema = z.object({
   orderName: z.string(),
@@ -32,11 +33,11 @@ const orderSchema = z.object({
 
 type Order = z.infer<typeof orderSchema>;
 
-interface OrderProps {
-  children: ReactNode;
-}
+interface OrderProps {}
 
-export function Order({ children }: OrderProps) {
+export function Order(props: OrderProps) {
+  const { modalState, setModalState, modalContentId, onSetModalContentId } = useModal();
+
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -47,9 +48,29 @@ export function Order({ children }: OrderProps) {
     },
   });
 
+  const modalIsOpen = modalState === "open";
+
+  useEffect(() => {
+    if (!modalState) return;
+
+    const order = payments.find((payment) => payment.id === modalContentId);
+
+    if (!order) return;
+
+    form.setValue("orderName", order.pedido);
+    form.setValue("orderValue", String(order.amount));
+    form.setValue("clientName", order.clientName);
+  }, [modalIsOpen]);
+
+  function handleCloseModal(){
+    form.reset();
+
+    onSetModalContentId("");
+    setModalState("closed");
+  }
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={modalIsOpen} onOpenChange={handleCloseModal}>
       <DialogContent>
         <DialogHeader className="mb-4">
           <DialogTitle>Pedido</DialogTitle>
