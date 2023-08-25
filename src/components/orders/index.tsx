@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 import { useModal } from "@/contexts/useModal";
+import { useOrder } from "@/contexts/useOrder";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
   filter,
 }: DataTableProps<TData, TValue>) {
   const { onSetModalContentId } = useModal();
+  const { handleDeleteOrder } = useOrder();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
@@ -44,6 +46,7 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     meta: {
       onSetModalContentId,
+      onDeleteOrder: handleDeleteOrder
     },
     state: {
       columnFilters,

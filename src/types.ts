@@ -1,7 +1,7 @@
-export type Payment = {
+export type Order = {
   id: string;
-  amount: number;
-  status: "pendente" | "finalizado";
+  amount: string;
+  status: boolean;
   clientName: string;
   onSetModalContentId?: (id: string) => void;
   orderName: string;

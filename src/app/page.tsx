@@ -1,7 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+
+import { formattPrice } from "@/utils/formatt-price";
+import { useOrder } from "@/contexts/useOrder";
 
 import { DataTable } from "../components/orders";
 import { columns } from "../components/orders/columns";
@@ -10,23 +13,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useModal } from "@/contexts/useModal";
 import { Order } from "@/components/order";
-import { Payment } from "@/types";
-import { api } from "@/services/api";
 
 export default function Home() {
   const { setModalState } = useModal();
+  const { orders, orderResume } = useOrder();
   const router = useRouter();
 
   const [filter, setFilter] = useState("");
-  const [payments, setPayments] = useState<Payment[]>([]);
 
   function logoutUser() {
     router.push("/sign");
   }
-
-  useEffect(() => {
-    api.get("/").then(({ data }) => setPayments(data));
-  }, []);
 
   return (
     <>
@@ -39,23 +36,13 @@ export default function Home() {
         </header>
 
         <div className="mt-4 overflow-scroll flex gap-4 lg:overflow-auto scrollbar-hide">
-          <div className="bg-white px-4 py-4 rounded-md flex-1 min-w-[200px]">
+          <div className="bg-white px-4 py-4 rounded-md flex-1 max-w-xs">
             <header>
               <span>Entradas</span>
             </header>
-            <strong className="text-xl mt-2 block">12.000000,00</strong>
-          </div>
-          <div className="bg-white px-4 py-4 rounded-md flex-1 min-w-[200px]">
-            <header>
-              <span>Saídas</span>
-            </header>
-            <strong className="text-xl mt-2 block">12.0000000,00</strong>
-          </div>
-          <div className="bg-white px-4 py-4 rounded-md flex-1 min-w-[200px]">
-            <header>
-              <span>Total</span>
-            </header>
-            <strong className="text-xl mt-2 block">12.000,00</strong>
+            <strong className="text-xl mt-2 block">
+              {formattPrice(orderResume)}
+            </strong>
           </div>
         </div>
 
@@ -71,11 +58,11 @@ export default function Home() {
             </Button>
           </div>
 
-          <DataTable columns={columns} filter={filter} data={payments} />
+          <DataTable columns={columns} filter={filter} data={orders} />
         </main>
       </div>
 
-      <Order setPayments={setPayments} />
+      <Order />
     </>
   );
 }

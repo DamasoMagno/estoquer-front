@@ -25,7 +25,8 @@ import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { api } from "@/services/api";
 import { AxiosError } from "axios";
-import { Payment } from "@/types";
+import { Order as IOrder } from "@/types";
+import { useOrder } from "@/contexts/useOrder";
 
 const orderSchema = z.object({
   orderName: z.string().min(1),
@@ -36,13 +37,11 @@ const orderSchema = z.object({
 
 type Order = z.infer<typeof orderSchema>;
 
-interface OrderProps {
-  setPayments: (payments: any) => void;
-}
 
-export function Order({ setPayments }: OrderProps) {
+export function Order() {
   const { modalState, setModalState, modalContentId, onSetModalContentId } =
     useModal();
+  const { handleCreateNewOrder, updateOrder } = useOrder();
 
   const modalIsOpen = modalState === "open";
 
@@ -59,7 +58,7 @@ export function Order({ setPayments }: OrderProps) {
   useEffect(() => {
     if (!modalContentId) return;
 
-    api.get(`orders/${modalContentId}`).then(({ data }) => {
+    api.get(`/${modalContentId}`).then(({ data }) => {
       form.setValue("orderName", data.orderName);
       form.setValue("amount", String(data.amount));
       form.setValue("clientName", data.clientName);
@@ -75,23 +74,19 @@ export function Order({ setPayments }: OrderProps) {
   }
 
   async function sendContent(data: Order) {
-    let response;
+    let response: any;
 
     try {
       if (!modalContentId) {
-        response = await api.post(`/`, data);
-        const newOrder: Payment = response.data;
-
-        setPayments((state: Payment[]) => [...state, newOrder]);
+        const order: IOrder = {
+          ...data,
+          id: "123dd"
+        }
+        handleCreateNewOrder(order);
       } else {
         response = await api.put(`/${modalContentId}`, data);
-        const orderUpddated = response.data;
-
-        setPayments((state: Payment[]) =>
-          state.map((payment: Payment) =>
-            payment.id === orderUpddated.id ? orderUpddated : payment
-          )
-        );
+        const orderUpddated: IOrder = response.data;
+        updateOrder(orderUpddated.id, orderUpddated);
       }
     } catch (error) {
       if (error instanceof AxiosError) {

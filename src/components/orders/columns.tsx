@@ -2,33 +2,13 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
-import { Payment } from "@/types";
+import { Order as IOrder } from "@/types";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
+export const columns: ColumnDef<IOrder>[] = [
   {
     accessorKey: "orderName",
     header: "Pedido",
@@ -85,7 +65,10 @@ export const columns: ColumnDef<Payment>[] = [
           >
             <Edit size={18} />
           </Button>
-          <Button variant="ghost">
+          <Button
+            variant="ghost"
+            onClick={() => options.meta?.onDeleteOrder(row.original.id)}
+          >
             <Trash size={18} />
           </Button>
         </div>
