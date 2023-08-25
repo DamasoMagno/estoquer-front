@@ -79,12 +79,12 @@ export function Order({ setPayments }: OrderProps) {
 
     try {
       if (!modalContentId) {
-        response = await api.post(`/orders`, data);
+        response = await api.post(`/`, data);
         const newOrder: Payment = response.data;
 
         setPayments((state: Payment[]) => [...state, newOrder]);
       } else {
-        response = await api.put(`/orders/${modalContentId}`, data);
+        response = await api.put(`/${modalContentId}`, data);
         const orderUpddated = response.data;
 
         setPayments((state: Payment[]) =>

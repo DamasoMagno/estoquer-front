@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
@@ -11,11 +11,12 @@ import { Input } from "@/components/ui/input";
 import { useModal } from "@/contexts/useModal";
 import { Order } from "@/components/order";
 import { Payment } from "@/types";
+import { api } from "@/services/api";
 
 export default function Home() {
   const { setModalState } = useModal();
   const router = useRouter();
-  
+
   const [filter, setFilter] = useState("");
   const [payments, setPayments] = useState<Payment[]>([]);
 
@@ -24,9 +25,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetch("http://localhost:4000/orders")
-      .then(response => response.json())
-      .then(data => setPayments(data))
+    api.get("/").then(({ data }) => setPayments(data));
   }, []);
 
   return (
@@ -76,7 +75,7 @@ export default function Home() {
         </main>
       </div>
 
-      <Order setPayments={setPayments}/>
+      <Order setPayments={setPayments} />
     </>
   );
 }
