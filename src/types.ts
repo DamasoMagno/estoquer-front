@@ -4,5 +4,5 @@ export type Payment = {
   status: "pendente" | "finalizado";
   clientName: string;
   onSetModalContentId?: (id: string) => void;
-  pedido: string;
+  orderName: string;
 };

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import { ModalProvider } from "@/contexts/useModal";
 
 const roboto = Roboto({
   weight: "400",
@@ -11,10 +12,7 @@ export const metadata: Metadata = {
   icons: ["logo.png"],
 };
 
-import { Order } from "@/components/order";
-
 import "./globals.css";
-import { ModalProvider } from "@/contexts/useModal";
 
 export default function RootLayout({
   children,
@@ -24,10 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.className} bg-slate-50`}>
-        <ModalProvider>
-          {children}
-          <Order />
-        </ModalProvider>
+        <ModalProvider>{children}</ModalProvider>
       </body>
     </html>
   );

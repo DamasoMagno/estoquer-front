@@ -30,10 +30,10 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "pedido",
+    accessorKey: "orderName",
     header: "Pedido",
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("pedido")}</div>
+      <div className="text-left font-medium">{row.getValue("orderName")}</div>
     ),
   },
   {
@@ -64,11 +64,11 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const orderFinished = row.getValue("status") !== "finalizado";
+      const orderPendent = !row.getValue("status");
 
       return (
-        <Badge className={cn({ "bg-red-500": orderFinished })}>
-          {row.getValue("status")}
+        <Badge className={cn({ "bg-red-500": orderPendent })}>
+          {row.getValue("status") ? "finalizado" : "pendente"}
         </Badge>
       );
     },
