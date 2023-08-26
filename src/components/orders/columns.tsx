@@ -1,8 +1,7 @@
 "use client";
-
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
-import { Order as IOrder } from "@/types";
+import { IOrder } from "@/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
@@ -61,7 +60,7 @@ export const columns: ColumnDef<IOrder>[] = [
         <div className="flex items-center justify-center">
           <Button
             variant="ghost"
-            onClick={() => options.meta?.onSetModalContentId(row.original.id)}
+            onClick={() => options.meta?.onSetModalOrderId(row.original.id)}
           >
             <Edit size={18} />
           </Button>

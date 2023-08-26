@@ -1,4 +1,4 @@
-export type Order = {
+export interface IOrder {
   id: string;
   amount: string;
   status: boolean;

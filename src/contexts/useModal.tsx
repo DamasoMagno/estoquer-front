@@ -2,10 +2,11 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
 interface ModalContextProps {
-  modalState: "open" | "closed";
-  setModalState: (state: "open" | "closed") => void;
-  modalContentId: string;
-  onSetModalContentId: (id: string) => void;
+  modalIsOpen: boolean;
+  modalOrderId: string;
+  onSetModalIsOpen(isOpen: boolean): void;
+  onSetModalOrderId(id: string): void;
+  onCloseModal(): void;
 }
 
 const ModalContext = createContext({} as ModalContextProps);
@@ -15,21 +16,27 @@ interface ModalProviderProps {
 }
 
 export function ModalProvider({ children }: ModalProviderProps) {
-  const [modalState, setModalState] = useState<"open" | "closed">("closed");
-  const [modalContentId, setModalContentId] = useState("");
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [modalOrderId, setModalOrderId] = useState<string>("");
 
-  function setModalContent(id: string) {
-    setModalState("open");
-    setModalContentId(id);
+  function openModalToUpdateOrder(id: string) {
+    setModalIsOpen(true);
+    setModalOrderId(id);
+  }
+
+  function closeModalOrder() {
+    setModalOrderId("");
+    setModalIsOpen(false);
   }
 
   return (
     <ModalContext.Provider
       value={{
-        modalState,
-        setModalState,
-        modalContentId,
-        onSetModalContentId: setModalContent,
+        modalIsOpen,
+        modalOrderId,
+        onSetModalIsOpen: setModalIsOpen,
+        onSetModalOrderId: openModalToUpdateOrder,
+        onCloseModal: closeModalOrder
       }}
     >
       {children}

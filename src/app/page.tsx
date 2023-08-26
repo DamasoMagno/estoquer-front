@@ -7,7 +7,6 @@ import { formattPrice } from "@/utils/formatt-price";
 import { useOrder } from "@/contexts/useOrder";
 
 import { DataTable } from "../components/orders";
-import { columns } from "../components/orders/columns";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,15 +14,13 @@ import { useModal } from "@/contexts/useModal";
 import { Order } from "@/components/order";
 
 export default function Home() {
-  const { setModalState } = useModal();
-  const { orders, orderResume } = useOrder();
   const router = useRouter();
+  const { onSetModalIsOpen } = useModal();
+  const { orderResume } = useOrder();
 
   const [filter, setFilter] = useState("");
 
-  function logoutUser() {
-    router.push("/sign");
-  }
+  const logoutUser = () => router.push("/sign");
 
   return (
     <>
@@ -53,12 +50,12 @@ export default function Home() {
               onChange={(e) => setFilter(e.target.value)}
             />
 
-            <Button className="sm:w-48" onClick={() => setModalState("open")}>
+            <Button className="sm:w-48" onClick={() => onSetModalIsOpen(true)}>
               Novo pedido
             </Button>
           </div>
 
-          <DataTable columns={columns} filter={filter} data={orders} />
+          <DataTable filter={filter} />
         </main>
       </div>
 

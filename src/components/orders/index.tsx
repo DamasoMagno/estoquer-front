@@ -1,10 +1,11 @@
 "use client";
 
+import { columns } from "./columns";
+
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  ColumnFiltersState,
   getSortedRowModel,
   getFilteredRowModel,
   useReactTable,
@@ -18,38 +19,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
 import { useModal } from "@/contexts/useModal";
 import { useOrder } from "@/contexts/useOrder";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
   filter?: string;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  filter,
-}: DataTableProps<TData, TValue>) {
-  const { onSetModalContentId } = useModal();
-  const { handleDeleteOrder } = useOrder();
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+export function DataTable<TData, TValue>({ filter }: DataTableProps) {
+  const { onSetModalOrderId } = useModal();
+  const { orders, handleDeleteOrder } = useOrder();
 
   const table = useReactTable({
-    data,
-    columns,
+    data: orders as TData[],
+    columns: columns as ColumnDef<TData, TValue>[],
     getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     meta: {
-      onSetModalContentId,
-      onDeleteOrder: handleDeleteOrder
+      onSetModalOrderId,
+      onDeleteOrder: handleDeleteOrder,
     },
     state: {
-      columnFilters,
       globalFilter: filter,
     },
   });

@@ -25,7 +25,7 @@ import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import { api } from "@/services/api";
 import { AxiosError } from "axios";
-import { Order as IOrder } from "@/types";
+import { IOrder } from "@/types";
 import { useOrder } from "@/contexts/useOrder";
 
 const orderSchema = z.object({
@@ -37,13 +37,9 @@ const orderSchema = z.object({
 
 type Order = z.infer<typeof orderSchema>;
 
-
 export function Order() {
-  const { modalState, setModalState, modalContentId, onSetModalContentId } =
-    useModal();
+  const { modalIsOpen, onCloseModal, modalOrderId } = useModal();
   const { handleCreateNewOrder, updateOrder } = useOrder();
-
-  const modalIsOpen = modalState === "open";
 
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
@@ -55,39 +51,35 @@ export function Order() {
     },
   });
 
-  useEffect(() => {
-    if (!modalContentId) return;
+  function setInputFieldsValue(data: IOrder) {
+    form.setValue("orderName", data.orderName);
+    form.setValue("amount", String(data.amount));
+    form.setValue("clientName", data.clientName);
+    form.setValue("status", data.status);
+  }
 
-    api.get(`/${modalContentId}`).then(({ data }) => {
-      form.setValue("orderName", data.orderName);
-      form.setValue("amount", String(data.amount));
-      form.setValue("clientName", data.clientName);
-      form.setValue("status", data.status);
-    });
-  }, [modalIsOpen]);
+  useEffect(() => {
+    if (!modalOrderId) return;
+
+    api.get(`/${modalOrderId}`).then(({ data }) => setInputFieldsValue(data));
+  }, [modalIsOpen, form, modalOrderId]);
 
   function handleCloseModal() {
     form.reset();
-
-    onSetModalContentId("");
-    setModalState("closed");
+    onCloseModal();
   }
 
-  async function sendContent(data: Order) {
-    let response: any;
-
+  async function handleCreateOrder(data: Order) {
     try {
-      if (!modalContentId) {
-        const order: IOrder = {
-          ...data,
-          id: "123dd"
-        }
-        handleCreateNewOrder(order);
+      if (modalOrderId) {
+        const response = await api.put(`/${modalOrderId}`, data);
+        const orderUpdatted: IOrder = response.data;
+  
+        updateOrder(orderUpdatted.id, orderUpdatted);
       } else {
-        response = await api.put(`/${modalContentId}`, data);
-        const orderUpddated: IOrder = response.data;
-        updateOrder(orderUpddated.id, orderUpddated);
+        handleCreateNewOrder(data);
       }
+
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error);
@@ -107,7 +99,7 @@ export function Order() {
         <Form {...form}>
           <form
             className="flex flex-col gap-4"
-            onSubmit={form.handleSubmit(sendContent)}
+            onSubmit={form.handleSubmit(handleCreateOrder)}
           >
             <FormField
               control={form.control}

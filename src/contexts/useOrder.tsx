@@ -8,12 +8,14 @@ import {
   useState,
 } from "react";
 
-import { Order as IOrder } from "@/types";
+import { IOrder } from "@/types";
 import { api } from "@/services/api";
+
+type OrderInputs = Omit<IOrder, "id">;
 
 interface OrderContextProps {
   orders: IOrder[];
-  handleCreateNewOrder(data: IOrder): void;
+  handleCreateNewOrder(data: OrderInputs): void;
   updateOrder(orderId: string, data: IOrder): void;
   handleDeleteOrder(orderId: string): void;
   orderResume: number;
@@ -37,7 +39,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
     api.get<IOrder[]>("/").then(({ data }) => setOrders(data));
   }, []);
 
-  async function handleCreateNewOrder(data: IOrder) {
+  async function handleCreateNewOrder(data: OrderInputs) {
     try {
       const response = await api.post("/", data);
       const order: IOrder = response.data;
