@@ -1,9 +1,7 @@
 "use client";
-
 import { columns } from "./columns";
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -21,18 +19,19 @@ import {
 } from "@/components/ui/table";
 import { useModal } from "@/contexts/useModal";
 import { useOrder } from "@/contexts/useOrder";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { useState } from "react";
 
-interface DataTableProps {
-  filter?: string;
-}
-
-export function DataTable<TData, TValue>({ filter }: DataTableProps) {
-  const { onSetModalOrderId } = useModal();
+export function Orders() {
+  const { onSetModalOrderId, onSetModalIsOpen } = useModal();
   const { orders, handleDeleteOrder } = useOrder();
 
+  const [filter, setFilter] = useState("");
+
   const table = useReactTable({
-    data: orders as TData[],
-    columns: columns as ColumnDef<TData, TValue>[],
+    data: orders,
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -46,49 +45,62 @@ export function DataTable<TData, TValue>({ filter }: DataTableProps) {
   });
 
   return (
-    <div className="mt-8">
-      <div className="rounded-md">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
+    <>
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <Input
+          placeholder="Buscar pedido"
+          onChange={(e) => setFilter(e.target.value)}
+        />
 
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <Button className="sm:w-48" onClick={() => onSetModalIsOpen(true)}>
+          Novo pedido
+        </Button>
       </div>
-    </div>
+
+      <div className="mt-8">
+        <div className="rounded-md">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </>
   );
 }

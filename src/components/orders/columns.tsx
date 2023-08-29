@@ -1,11 +1,13 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
-import { IOrder } from "@/types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { IOrder } from "@/interfaces";
+import { formattPrice } from "@/utils/formatt-price";
+
 
 export const columns: ColumnDef<IOrder>[] = [
   {
@@ -20,9 +22,7 @@ export const columns: ColumnDef<IOrder>[] = [
     header: "Cliente",
     cell: ({ row }) => {
       return (
-        <div className="text-left font-medium">
-          {row.getValue("client")}
-        </div>
+        <div className="text-left font-medium">{row.getValue("client")}</div>
       );
     },
   },
@@ -31,12 +31,17 @@ export const columns: ColumnDef<IOrder>[] = [
     header: "Valor",
     cell: ({ row }) => {
       const amount = Number(row.getValue("value"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      return <div className="text-left font-medium">{formattPrice(amount)}</div>;
+    },
+  },
+  {
+    accessorKey: "type",
+    header: "Tipo",
+    cell: ({ row }) => {
+      const orderCategory =
+        row.getValue("type") === "income" ? "Entrada" : "Saída";
 
-      return <div className="text-left font-medium">{formatted}</div>;
+      return <div>{orderCategory}</div>;
     },
   },
   {

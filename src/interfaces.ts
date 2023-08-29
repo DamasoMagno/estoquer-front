@@ -3,6 +3,6 @@ export interface IOrder {
   value: number;
   finished: boolean;
   client: string;
-  onSetModalContentId?: (id: string) => void;
   name: string;
+  type: "income" | "outcome";
 };

@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 
-import { IOrder } from "@/types";
 import { supabase } from "@/lib/supabase";
+import { IOrder } from "@/interfaces";
 
 type OrderInputs = Omit<IOrder, "id">;
 
@@ -18,7 +18,10 @@ interface OrderContextProps {
   handleCreateNewOrder(data: OrderInputs): void;
   updateOrder(orderId: number, data: OrderInputs): void;
   handleDeleteOrder(orderId: number): void;
-  orderResume: number;
+  orderResume: {
+    income: number;
+    outcome: number;
+  };
 }
 
 interface OrderProviderProps {
@@ -30,17 +33,28 @@ const OrderContext = createContext({} as OrderContextProps);
 export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
 
-  let orderResume = orders.reduce((initialValue, currentValue) => {
-    const totalValue = initialValue += currentValue.value;
-    return totalValue;
-  }, 0);
+  let orderResume = orders.reduce(
+    (initialValue, currentValue) => {
+      if (currentValue.type === "income") {
+        initialValue.income += currentValue.value;
+      } else {
+        initialValue.outcome += currentValue.value;
+      }
+
+      return initialValue;
+    },
+    {
+      income: 0,
+      outcome: 0,
+    }
+  );
 
   useEffect(() => {
     supabase
       .from("orders")
       .select()
       .then(({ data }) => {
-        const orders = !!data ? data as IOrder[] : [];
+        const orders = !!data ? (data as IOrder[]) : [];
         setOrders(orders);
       });
   }, []);
@@ -52,8 +66,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
         .insert({ ...data })
         .select()
         .single();
-      
-        console.log(response)
+
       const order: IOrder = response.data;
 
       setOrders((state: IOrder[]) => [...state, order]);

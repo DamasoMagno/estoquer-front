@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 
 import { useModal } from "@/contexts/useModal";
+import { useOrder } from "@/contexts/useOrder";
+import { supabase } from "@/lib/supabase";
 
 import {
   Dialog,
@@ -19,18 +21,23 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
-import { IOrder } from "@/types";
-import { useOrder } from "@/contexts/useOrder";
-import { supabase } from "@/lib/supabase";
 
 const orderSchema = z.object({
   name: z.string().min(1),
   value: z.number().min(1),
   client: z.string().min(1),
+  type: z.enum(["income", "outcome"]),
   finished: z.boolean().default(false),
 });
 
@@ -50,11 +57,12 @@ export function Order() {
     },
   });
 
-  function setInputFieldsValue(data: IOrder) {
+  function setInputFieldsValue(data: Order) {
     form.setValue("name", data.name);
     form.setValue("value", data.value);
     form.setValue("client", data.client);
     form.setValue("finished", data.finished);
+    form.setValue("type", data.type);
   }
 
   useEffect(() => {
@@ -84,6 +92,11 @@ export function Order() {
       handleCloseModal();
     } catch (error) {}
   }
+
+  const selectTypes = {
+    income: "Entrada",
+    outcome: "Saída",
+  };
 
   return (
     <Dialog open={modalIsOpen} onOpenChange={handleCloseModal}>
@@ -131,10 +144,36 @@ export function Order() {
               name="client"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cliente</FormLabel>
+                  <FormLabel>
+                    {form.watch("type") === "income" ? "Empresa" : "Cliente"}
+                  </FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tipo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder={selectTypes[field.value]} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="income">Entradas</SelectItem>
+                      <SelectItem value="outcome">Saidas</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormItem>
               )}
             />
