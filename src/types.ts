@@ -1,8 +1,8 @@
 export interface IOrder {
-  id: string;
-  amount: string;
-  status: boolean;
-  clientName: string;
+  id: number;
+  value: number;
+  finished: boolean;
+  client: string;
   onSetModalContentId?: (id: string) => void;
-  orderName: string;
+  name: string;
 };

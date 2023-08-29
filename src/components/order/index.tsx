@@ -23,16 +23,15 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
-import { api } from "@/services/api";
-import { AxiosError } from "axios";
 import { IOrder } from "@/types";
 import { useOrder } from "@/contexts/useOrder";
+import { supabase } from "@/lib/supabase";
 
 const orderSchema = z.object({
-  orderName: z.string().min(1),
-  amount: z.string().min(1),
-  clientName: z.string().min(1),
-  status: z.boolean().default(false),
+  name: z.string().min(1),
+  value: z.number().min(1),
+  client: z.string().min(1),
+  finished: z.boolean().default(false),
 });
 
 type Order = z.infer<typeof orderSchema>;
@@ -44,24 +43,29 @@ export function Order() {
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
-      clientName: "",
-      orderName: "",
-      amount: "",
-      status: false,
+      client: "",
+      name: "",
+      value: 0,
+      finished: false,
     },
   });
 
   function setInputFieldsValue(data: IOrder) {
-    form.setValue("orderName", data.orderName);
-    form.setValue("amount", String(data.amount));
-    form.setValue("clientName", data.clientName);
-    form.setValue("status", data.status);
+    form.setValue("name", data.name);
+    form.setValue("value", data.value);
+    form.setValue("client", data.client);
+    form.setValue("finished", data.finished);
   }
 
   useEffect(() => {
     if (!modalOrderId) return;
 
-    api.get(`/${modalOrderId}`).then(({ data }) => setInputFieldsValue(data));
+    supabase
+      .from("orders")
+      .select()
+      .eq("id", modalOrderId)
+      .single()
+      .then(({ data }) => setInputFieldsValue(data));
   }, [modalIsOpen, form, modalOrderId]);
 
   function handleCloseModal() {
@@ -71,22 +75,14 @@ export function Order() {
 
   async function handleCreateOrder(data: Order) {
     try {
-      if (modalOrderId) {
-        const response = await api.put(`/${modalOrderId}`, data);
-        const orderUpdatted: IOrder = response.data;
-  
-        updateOrder(orderUpdatted.id, orderUpdatted);
+      if (modalOrderId > 0) {
+        updateOrder(modalOrderId, data);
       } else {
         handleCreateNewOrder(data);
       }
 
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error);
-      }
-    }
-
-    handleCloseModal();
+      handleCloseModal();
+    } catch (error) {}
   }
 
   return (
@@ -103,7 +99,7 @@ export function Order() {
           >
             <FormField
               control={form.control}
-              name="orderName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Pedido</FormLabel>
@@ -116,12 +112,15 @@ export function Order() {
 
             <FormField
               control={form.control}
-              name="amount"
-              render={({ field }) => (
+              name="value"
+              render={({ field: { onChange, ...rest } }) => (
                 <FormItem>
                   <FormLabel>Valor do pedido</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      onChange={(e) => onChange(Number(e.target.value))}
+                      {...rest}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -129,7 +128,7 @@ export function Order() {
 
             <FormField
               control={form.control}
-              name="clientName"
+              name="client"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cliente</FormLabel>
@@ -142,7 +141,7 @@ export function Order() {
 
             <FormField
               control={form.control}
-              name="status"
+              name="finished"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>

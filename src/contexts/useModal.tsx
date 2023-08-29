@@ -3,9 +3,9 @@ import { ReactNode, createContext, useContext, useState } from "react";
 
 interface ModalContextProps {
   modalIsOpen: boolean;
-  modalOrderId: string;
+  modalOrderId: number;
   onSetModalIsOpen(isOpen: boolean): void;
-  onSetModalOrderId(id: string): void;
+  onSetModalOrderId(id: number): void;
   onCloseModal(): void;
 }
 
@@ -17,15 +17,15 @@ interface ModalProviderProps {
 
 export function ModalProvider({ children }: ModalProviderProps) {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [modalOrderId, setModalOrderId] = useState<string>("");
+  const [modalOrderId, setModalOrderId] = useState<number>(0);
 
-  function openModalToUpdateOrder(id: string) {
+  function openModalToUpdateOrder(id: number) {
     setModalIsOpen(true);
     setModalOrderId(id);
   }
 
   function closeModalOrder() {
-    setModalOrderId("");
+    setModalOrderId(0);
     setModalIsOpen(false);
   }
 

@@ -26,9 +26,6 @@ export default function Home() {
     <>
       <div className="max-w-3xl mx-auto px-4">
         <header className="flex items-center gap-2 mt-4">
-          <Button variant="outline" onClick={logoutUser}>
-            <LogOut size={16} />
-          </Button>
           <h2 className="text-xl bold">Resumo de pedidos</h2>
         </header>
 

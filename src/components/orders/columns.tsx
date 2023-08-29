@@ -9,28 +9,28 @@ import { cn } from "@/lib/utils";
 
 export const columns: ColumnDef<IOrder>[] = [
   {
-    accessorKey: "orderName",
+    accessorKey: "name",
     header: "Pedido",
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("orderName")}</div>
+      <div className="text-left font-medium">{row.getValue("name")}</div>
     ),
   },
   {
-    accessorKey: "clientName",
+    accessorKey: "client",
     header: "Cliente",
     cell: ({ row }) => {
       return (
         <div className="text-left font-medium">
-          {row.getValue("clientName")}
+          {row.getValue("client")}
         </div>
       );
     },
   },
   {
-    accessorKey: "amount",
+    accessorKey: "value",
     header: "Valor",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const amount = Number(row.getValue("value"));
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -40,14 +40,14 @@ export const columns: ColumnDef<IOrder>[] = [
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "finished",
     header: "Status",
     cell: ({ row }) => {
-      const orderPendent = !row.getValue("status");
+      const orderPendent = !row.getValue("finished");
 
       return (
         <Badge className={cn({ "bg-red-500": orderPendent })}>
-          {row.getValue("status") ? "finalizado" : "pendente"}
+          {row.getValue("finished") ? "finalizado" : "pendente"}
         </Badge>
       );
     },

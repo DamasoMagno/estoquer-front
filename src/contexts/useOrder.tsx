@@ -9,15 +9,15 @@ import {
 } from "react";
 
 import { IOrder } from "@/types";
-import { api } from "@/services/api";
+import { supabase } from "@/lib/supabase";
 
 type OrderInputs = Omit<IOrder, "id">;
 
 interface OrderContextProps {
   orders: IOrder[];
   handleCreateNewOrder(data: OrderInputs): void;
-  updateOrder(orderId: string, data: IOrder): void;
-  handleDeleteOrder(orderId: string): void;
+  updateOrder(orderId: number, data: OrderInputs): void;
+  handleDeleteOrder(orderId: number): void;
   orderResume: number;
 }
 
@@ -31,31 +31,49 @@ export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
 
   let orderResume = orders.reduce((initialValue, currentValue) => {
-    const totalValue = initialValue += Number(currentValue.amount);
+    const totalValue = initialValue += currentValue.value;
     return totalValue;
   }, 0);
 
   useEffect(() => {
-    api.get<IOrder[]>("/").then(({ data }) => setOrders(data));
+    supabase
+      .from("orders")
+      .select()
+      .then(({ data }) => {
+        const orders = !!data ? data as IOrder[] : [];
+        setOrders(orders);
+      });
   }, []);
 
   async function handleCreateNewOrder(data: OrderInputs) {
     try {
-      const response = await api.post("/", data);
+      const response = await supabase
+        .from("orders")
+        .insert({ ...data })
+        .select()
+        .single();
+      
+        console.log(response)
       const order: IOrder = response.data;
 
       setOrders((state: IOrder[]) => [...state, order]);
     } catch (error) {
-      if(error instanceof AxiosError){
-        console.log(error.message)
+      if (error instanceof AxiosError) {
+        console.log(error.message);
       }
     }
   }
 
-  async function updateOrder(orderId: string, data: IOrder) {
+  async function updateOrder(orderId: number, data: OrderInputs) {
     try {
-      const response = await api.put(`/${orderId}`, data);
-      const orderUpdatted: IOrder = response.data;
+      const { data: supData } = await supabase
+        .from("orders")
+        .update({ ...data })
+        .eq("id", orderId)
+        .select()
+        .single();
+
+      const orderUpdatted: IOrder = supData;
 
       const newOrders = orders.map((order: IOrder) => {
         return order.id === orderUpdatted.id ? orderUpdatted : order;
@@ -65,13 +83,14 @@ export function OrderProvider({ children }: OrderProviderProps) {
     } catch (error) {}
   }
 
-  async function handleDeleteOrder(orderId: string) {
+  async function handleDeleteOrder(orderId: number) {
     try {
-      await api.delete(`/${orderId}`);
+      await supabase.from("orders").delete().eq("id", orderId);
 
       const ordersFilteredById = orders.filter(
         (order: IOrder) => order.id !== orderId
       );
+
       setOrders(ordersFilteredById);
     } catch (error) {}
   }
@@ -83,7 +102,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
         handleCreateNewOrder,
         updateOrder,
         handleDeleteOrder,
-        orderResume
+        orderResume,
       }}
     >
       {children}
