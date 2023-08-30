@@ -8,30 +8,29 @@ import { cn } from "@/lib/utils";
 import { IOrder } from "@/interfaces";
 import { formattPrice } from "@/utils/formatt-price";
 
-
 export const columns: ColumnDef<IOrder>[] = [
   {
     accessorKey: "name",
     header: "Pedido",
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("name")}</div>
+      <p className="text-left font-medium">{row.getValue("name")}</p>
     ),
   },
   {
     accessorKey: "client",
     header: "Cliente",
-    cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">{row.getValue("client")}</div>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="text-left font-medium">{row.getValue("client")}</div>
+    ),
   },
   {
-    accessorKey: "value",
+    accessorKey: "price",
     header: "Valor",
     cell: ({ row }) => {
-      const amount = Number(row.getValue("value"));
-      return <div className="text-left font-medium">{formattPrice(amount)}</div>;
+      const amount = Number(row.getValue("price"));
+      return (
+        <div className="text-left font-medium">{formattPrice(amount)}</div>
+      );
     },
   },
   {

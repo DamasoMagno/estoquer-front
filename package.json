@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "database": "json-server --watch -p 4000 database.json"
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.2.0",

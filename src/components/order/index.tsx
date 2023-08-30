@@ -35,7 +35,7 @@ import { Checkbox } from "../ui/checkbox";
 
 const orderSchema = z.object({
   name: z.string().min(1),
-  value: z.number().min(1),
+  price: z.number().min(1),
   client: z.string().min(1),
   type: z.enum(["income", "outcome"]),
   finished: z.boolean().default(false),
@@ -52,14 +52,14 @@ export function Order() {
     defaultValues: {
       client: "",
       name: "",
-      value: 0,
+      price: 0,
       finished: false,
     },
   });
 
   function setInputFieldsValue(data: Order) {
     form.setValue("name", data.name);
-    form.setValue("value", data.value);
+    form.setValue("price", data.price);
     form.setValue("client", data.client);
     form.setValue("finished", data.finished);
     form.setValue("type", data.type);
@@ -83,7 +83,7 @@ export function Order() {
 
   async function handleCreateOrder(data: Order) {
     try {
-      if (modalOrderId > 0) {
+      if (modalOrderId) {
         updateOrder(modalOrderId, data);
       } else {
         handleCreateNewOrder(data);
@@ -125,7 +125,7 @@ export function Order() {
 
             <FormField
               control={form.control}
-              name="value"
+              name="price"
               render={({ field: { onChange, ...rest } }) => (
                 <FormItem>
                   <FormLabel>Valor do pedido</FormLabel>

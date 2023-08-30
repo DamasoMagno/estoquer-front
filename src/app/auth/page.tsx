@@ -4,11 +4,12 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
+import { supabase } from "@/lib/supabase";
 
+import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+
 
 const signSchema = z.object({
   email: z.string().email(),

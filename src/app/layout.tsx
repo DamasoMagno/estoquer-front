@@ -16,8 +16,6 @@ export const metadata: Metadata = {
 };
 
 import "./globals.css";
-import { supabase } from "@/lib/supabase";
-import { redirect } from "next/navigation";
 
 export default async function RootLayout({
   children,

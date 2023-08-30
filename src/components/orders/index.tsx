@@ -3,7 +3,7 @@ import { columns } from "./columns";
 
 import {
   flexRender,
-  getCoreRowModel,
+  getCoreRowModel,  
   getSortedRowModel,
   getFilteredRowModel,
   useReactTable,

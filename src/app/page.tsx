@@ -3,7 +3,6 @@ import { formattPrice } from "@/utils/formatt-price";
 import { useOrder } from "@/contexts/useOrder";
 
 import { Orders } from "../components/orders";
-
 import { Order } from "@/components/order";
 
 export default function Home() {

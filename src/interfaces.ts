@@ -1,6 +1,6 @@
 export interface IOrder {
-  id: number;
-  value: number;
+  id: string;
+  price: number;
   finished: boolean;
   client: string;
   name: string;

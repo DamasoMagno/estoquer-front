@@ -13,15 +13,17 @@ import { IOrder } from "@/interfaces";
 
 type OrderInputs = Omit<IOrder, "id">;
 
+type OrderResume = {
+  income: number;
+  outcome: number;
+};
+
 interface OrderContextProps {
   orders: IOrder[];
   handleCreateNewOrder(data: OrderInputs): void;
-  updateOrder(orderId: number, data: OrderInputs): void;
-  handleDeleteOrder(orderId: number): void;
-  orderResume: {
-    income: number;
-    outcome: number;
-  };
+  updateOrder(orderId: string, data: OrderInputs): void;
+  handleDeleteOrder(orderId: string): void;
+  orderResume: OrderResume;
 }
 
 interface OrderProviderProps {
@@ -36,9 +38,9 @@ export function OrderProvider({ children }: OrderProviderProps) {
   let orderResume = orders.reduce(
     (initialValue, currentValue) => {
       if (currentValue.type === "income") {
-        initialValue.income += currentValue.value;
+        initialValue.income += currentValue.price;
       } else {
-        initialValue.outcome += currentValue.value;
+        initialValue.outcome += currentValue.price;
       }
 
       return initialValue;
@@ -77,7 +79,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
     }
   }
 
-  async function updateOrder(orderId: number, data: OrderInputs) {
+  async function updateOrder(orderId: string, data: OrderInputs) {
     try {
       const { data: supData } = await supabase
         .from("orders")
@@ -96,7 +98,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
     } catch (error) {}
   }
 
-  async function handleDeleteOrder(orderId: number) {
+  async function handleDeleteOrder(orderId: string) {
     try {
       await supabase.from("orders").delete().eq("id", orderId);
 
