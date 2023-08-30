@@ -1,5 +1,7 @@
 "use client";
 import { AxiosError } from "axios";
+import { IOrder } from "@/interfaces";
+
 import {
   ReactNode,
   createContext,
@@ -7,9 +9,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { toast } from "react-hot-toast";
 
 import { supabase } from "@/lib/supabase";
-import { IOrder } from "@/interfaces";
 
 type OrderInputs = Omit<IOrder, "id">;
 
@@ -20,10 +22,12 @@ type OrderResume = {
 
 interface OrderContextProps {
   orders: IOrder[];
+  currentOrder: IOrder | null;
+  orderResume: OrderResume;
   handleCreateNewOrder(data: OrderInputs): void;
   updateOrder(orderId: string, data: OrderInputs): void;
   handleDeleteOrder(orderId: string): void;
-  orderResume: OrderResume;
+  setCurrentOrder(order: any): void;
 }
 
 interface OrderProviderProps {
@@ -34,6 +38,7 @@ const OrderContext = createContext({} as OrderContextProps);
 
 export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
+  const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
 
   let orderResume = orders.reduce(
     (initialValue, currentValue) => {
@@ -72,6 +77,8 @@ export function OrderProvider({ children }: OrderProviderProps) {
       const order: IOrder = response.data;
 
       setOrders((state: IOrder[]) => [...state, order]);
+
+      toast.success("Pedido cadastrado com sucesso");
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error.message);
@@ -95,6 +102,8 @@ export function OrderProvider({ children }: OrderProviderProps) {
       });
 
       setOrders(newOrders);
+
+      toast.success("Pedido atualizado");
     } catch (error) {}
   }
 
@@ -107,6 +116,8 @@ export function OrderProvider({ children }: OrderProviderProps) {
       );
 
       setOrders(ordersFilteredById);
+
+      toast.success("Pedido removido do sistema");
     } catch (error) {}
   }
 
@@ -118,6 +129,8 @@ export function OrderProvider({ children }: OrderProviderProps) {
         updateOrder,
         handleDeleteOrder,
         orderResume,
+        currentOrder,
+        setCurrentOrder,
       }}
     >
       {children}

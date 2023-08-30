@@ -16,8 +16,9 @@ export const metadata: Metadata = {
 };
 
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;

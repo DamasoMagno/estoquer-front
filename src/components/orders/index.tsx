@@ -1,6 +1,5 @@
 "use client";
-import { columns } from "./columns";
-
+import { useState } from "react";
 import {
   flexRender,
   getCoreRowModel,  
@@ -8,6 +7,10 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
+import { columns } from "./columns";
+import { useModal } from "@/contexts/useModal";
+import { useOrder } from "@/contexts/useOrder";
 
 import {
   Table,
@@ -17,15 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useModal } from "@/contexts/useModal";
-import { useOrder } from "@/contexts/useOrder";
+
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { useState } from "react";
 
 export function Orders() {
-  const { onSetModalOrderId, onSetModalIsOpen } = useModal();
-  const { orders, handleDeleteOrder } = useOrder();
+  const { onSetModalIsOpen } = useModal();
+  const { orders, handleDeleteOrder, setCurrentOrder } = useOrder();
 
   const [filter, setFilter] = useState("");
 
@@ -36,13 +37,20 @@ export function Orders() {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     meta: {
-      onSetModalOrderId,
+      onSetModalCurrentOrder,
       onDeleteOrder: handleDeleteOrder,
     },
     state: {
       globalFilter: filter,
     },
   });
+
+  function onSetModalCurrentOrder(orderId: string){
+    const order = orders.find(order => order.id === orderId);
+    setCurrentOrder(order);
+
+    onSetModalIsOpen(true);
+  }
 
   return (
     <>

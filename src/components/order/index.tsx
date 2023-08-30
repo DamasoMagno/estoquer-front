@@ -6,7 +6,6 @@ import { useEffect } from "react";
 
 import { useModal } from "@/contexts/useModal";
 import { useOrder } from "@/contexts/useOrder";
-import { supabase } from "@/lib/supabase";
 
 import {
   Dialog,
@@ -44,8 +43,9 @@ const orderSchema = z.object({
 type Order = z.infer<typeof orderSchema>;
 
 export function Order() {
-  const { modalIsOpen, onCloseModal, modalOrderId } = useModal();
-  const { handleCreateNewOrder, updateOrder } = useOrder();
+  const { modalIsOpen, onSetModalIsOpen } = useModal();
+  const { handleCreateNewOrder, updateOrder, currentOrder, setCurrentOrder } =
+    useOrder();
 
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
@@ -57,34 +57,27 @@ export function Order() {
     },
   });
 
-  function setInputFieldsValue(data: Order) {
-    form.setValue("name", data.name);
-    form.setValue("price", data.price);
-    form.setValue("client", data.client);
-    form.setValue("finished", data.finished);
-    form.setValue("type", data.type);
-  }
-
   useEffect(() => {
-    if (!modalOrderId) return;
+    if (!currentOrder) return;
 
-    supabase
-      .from("orders")
-      .select()
-      .eq("id", modalOrderId)
-      .single()
-      .then(({ data }) => setInputFieldsValue(data));
-  }, [modalIsOpen, form, modalOrderId]);
+    form.setValue("name", currentOrder.name);
+    form.setValue("price", currentOrder.price);
+    form.setValue("client", currentOrder.client);
+    form.setValue("finished", currentOrder.finished);
+    form.setValue("type", currentOrder.type);
+  }, [modalIsOpen, form, currentOrder]);
 
   function handleCloseModal() {
     form.reset();
-    onCloseModal();
+
+    setCurrentOrder(null);
+    onSetModalIsOpen(false);
   }
 
   async function handleCreateOrder(data: Order) {
     try {
-      if (modalOrderId) {
-        updateOrder(modalOrderId, data);
+      if (currentOrder) {
+        updateOrder(currentOrder.id, data);
       } else {
         handleCreateNewOrder(data);
       }

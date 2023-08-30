@@ -1,12 +1,14 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash } from "lucide-react";
+import { IOrder } from "@/interfaces";
+
+import { formattPrice } from "@/utils/formatt-price";
+import { cn } from "@/lib/utils";
 
 import { Badge } from "@/components/ui/badge";
+
 import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
-import { IOrder } from "@/interfaces";
-import { formattPrice } from "@/utils/formatt-price";
 
 export const columns: ColumnDef<IOrder>[] = [
   {
@@ -64,7 +66,7 @@ export const columns: ColumnDef<IOrder>[] = [
         <div className="flex items-center justify-center">
           <Button
             variant="ghost"
-            onClick={() => options.meta?.onSetModalOrderId(row.original.id)}
+            onClick={() => options.meta?.onSetModalCurrentOrder(row.original.id)}
           >
             <Edit size={18} />
           </Button>

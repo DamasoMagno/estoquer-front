@@ -4,6 +4,7 @@ import { useOrder } from "@/contexts/useOrder";
 
 import { Orders } from "../components/orders";
 import { Order } from "@/components/order";
+import { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const { orderResume } = useOrder();
@@ -38,6 +39,8 @@ export default function Home() {
           <Orders />
         </main>
       </div>
+
+      <Toaster position="top-right" />
       <Order />
     </>
   );
