@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function Login() {
+export default function SignUp() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -23,7 +23,7 @@ export default function Login() {
         },
       });
 
-      router.push("/");
+      router.push("/auth");
     } catch (error) {}
   };
 

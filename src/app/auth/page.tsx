@@ -44,7 +44,7 @@ export default function Login() {
         Realizar Login
       </Button>
 
-      <Link href="/signUp">Criar conta</Link>
+      <Link href="/sign">Criar conta</Link>
     </div>
   );
 }
