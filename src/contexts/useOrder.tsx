@@ -1,6 +1,12 @@
 "use client";
 import { AxiosError } from "axios";
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-hot-toast";
 
 import { IOrder } from "@/interfaces";
@@ -33,7 +39,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
 
-  let orderResume = orders.reduce(
+  let orderResume: OrderResume = orders.reduce(
     (initialValue, currentValue) => {
       if (currentValue.type === "income") {
         initialValue.income += currentValue.price;
@@ -50,8 +56,9 @@ export function OrderProvider({ children }: OrderProviderProps) {
   );
 
   useEffect(() => {
-    api.get<IOrder[]>("/orders")
-      .then((data) => setOrders(data.data));
+    api.get<IOrder[]>("/orders").then((data) => {
+      setOrders(data.data);
+    });
   }, []);
 
   async function handleCreateNewOrder(data: OrderInputs) {

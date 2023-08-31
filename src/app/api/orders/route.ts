@@ -34,9 +34,8 @@ export async function GET() {
     .select()
     .eq("customerId", user?.id);
 
-  const orders = response.data as IOrder[];
-
-  return NextResponse.json(orders);
+  const orders = response.data as IOrder[] ?? [];
+  return NextResponse.json(orders as IOrder[]);
 }
 
 export async function POST(req: Request) {
