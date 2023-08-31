@@ -1,11 +1,10 @@
 "use client";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useRouter } from "next/router";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 
 export default function Login() {
   const router = useRouter();
@@ -16,11 +15,14 @@ export default function Login() {
 
   const handleSignIn = async () => {
     try {
-      await supabase.auth.signInWithPassword({
+      await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${location.origin}/auth/callback`,
+        },
       });
-  
+
       router.push("/");
     } catch (error) {}
   };
@@ -41,10 +43,8 @@ export default function Login() {
       />
 
       <Button className="w-full" onClick={handleSignIn}>
-        Realizar Login
+        Criar conta
       </Button>
-
-      <Link href="/signup">Criar conta</Link>
     </div>
   );
 }

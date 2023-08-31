@@ -1,17 +1,10 @@
 "use client";
 import { AxiosError } from "axios";
-import { IOrder } from "@/interfaces";
-
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { supabase } from "@/lib/supabase";
+import { IOrder } from "@/interfaces";
+import { api } from "@/lib/api";
 
 type OrderInputs = Omit<IOrder, "id">;
 
@@ -57,24 +50,14 @@ export function OrderProvider({ children }: OrderProviderProps) {
   );
 
   useEffect(() => {
-    supabase
-      .from("orders")
-      .select()
-      .then(({ data }) => {
-        const orders = !!data ? (data as IOrder[]) : [];
-        setOrders(orders);
-      });
+    api.get<IOrder[]>("/orders")
+      .then((data) => setOrders(data.data));
   }, []);
 
   async function handleCreateNewOrder(data: OrderInputs) {
     try {
-      const response = await supabase
-        .from("orders")
-        .insert({ ...data })
-        .select()
-        .single();
-
-      const order: IOrder = response.data;
+      const { data: response } = await api.post("/orders", data);
+      const order: IOrder = response;
 
       setOrders((state: IOrder[]) => [...state, order]);
 
@@ -88,28 +71,21 @@ export function OrderProvider({ children }: OrderProviderProps) {
 
   async function updateOrder(orderId: string, data: OrderInputs) {
     try {
-      const { data: supData } = await supabase
-        .from("orders")
-        .update({ ...data })
-        .eq("id", orderId)
-        .select()
-        .single();
-
-      const orderUpdatted: IOrder = supData;
+      const { data: response } = await api.put(`/orders/${orderId}`, data);
+      const orderUpdatted: IOrder = response;
 
       const newOrders = orders.map((order: IOrder) => {
         return order.id === orderUpdatted.id ? orderUpdatted : order;
       });
 
       setOrders(newOrders);
-
       toast.success("Pedido atualizado");
     } catch (error) {}
   }
 
   async function handleDeleteOrder(orderId: string) {
     try {
-      await supabase.from("orders").delete().eq("id", orderId);
+      await api.delete(`/orders/${orderId}`);
 
       const ordersFilteredById = orders.filter(
         (order: IOrder) => order.id !== orderId
