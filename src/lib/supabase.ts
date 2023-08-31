@@ -9,6 +9,6 @@ export const supabase = createClient(
   {
     auth: {
       persistSession: false
-    }
+    },
   }
 );

@@ -1,15 +1,12 @@
 "use client";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
-import { supabase } from "@/lib/supabase";
+import { z } from "zod";
 
-import { Form, FormField, FormItem, FormControl } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 
 const signSchema = z.object({
   email: z.string().email(),
@@ -18,59 +15,40 @@ const signSchema = z.object({
 
 type Sign = z.infer<typeof signSchema>;
 
-export default function Sign() {
-  const router = useRouter();
-  const form = useForm<Sign>({
-    resolver: zodResolver(signSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  async function authenticaUser({ email, password }: Sign) {
+  const router = useRouter();
+  const supabase = createClientComponentClient();
+
+  const handleSignIn = async () => {
     await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     router.push("/");
-  }
+  };
 
   return (
-    <div>
-      <Form {...form}>
-        <form
-          className="h-screen flex justify-center items-center px-4 flex-col gap-4 max-w-md mx-auto"
-          onSubmit={form.handleSubmit(authenticaUser)}
-        >
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input {...field} placeholder="Digite seu email" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+    <div className="h-screen flex justify-center items-center px-4 flex-col gap-4 max-w-md mx-auto">
+      <Input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Digite seu email"
+        type="email"
+      />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormControl>
-                  <Input {...field} placeholder="Digite sua senha" />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+      <Input
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Digite sua senha"
+      />
 
-          <Button className="w-full">Realizar Login</Button>
-        </form>
-      </Form>
+      <Button className="w-full" onClick={handleSignIn}>
+        Realizar Login
+      </Button>
     </div>
   );
 }
