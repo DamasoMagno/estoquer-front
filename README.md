@@ -14,8 +14,15 @@ their orders.
 - [ ] should be able to send message to customer with pendent payment
 - [ ] should be able to filter orders
 
+# Figma Design
+[https://www.figma.com/file/wcIBO7XsuZrmNZlZuoyFao/EstoqueGo?type=design&node-id=0%3A1&mode=design&t=HxwhI67eSKKh0ANF-1]Design do projeto utilizado
+
 # Tecnologies
 
+- Typescript
 - Nextjs
+- Supabase
+- React Hook Form
+- Zod
 - Tailwind
 - Shadcn
