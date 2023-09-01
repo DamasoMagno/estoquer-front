@@ -1,4 +1,5 @@
 "use client";
+
 import { AxiosError } from "axios";
 import {
   ReactNode,
@@ -7,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 import { IOrder } from "@/interfaces";
@@ -23,6 +25,7 @@ interface OrderContextProps {
   orders: IOrder[];
   currentOrder: IOrder | null;
   orderResume: OrderResume;
+  ordersLoading: boolean;
   handleCreateNewOrder(data: OrderInputs): void;
   updateOrder(orderId: string, data: OrderInputs): void;
   handleDeleteOrder(orderId: string): void;
@@ -38,6 +41,8 @@ const OrderContext = createContext({} as OrderContextProps);
 export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
+  const [ordersLoading, setOrdersLoading] = useState<boolean>(false);
+  const path = usePathname();
 
   let orderResume: OrderResume = orders.reduce(
     (initialValue, currentValue) => {
@@ -55,11 +60,18 @@ export function OrderProvider({ children }: OrderProviderProps) {
     }
   );
 
+  const paths = ["/auth", "/sign"];
+
   useEffect(() => {
-    api.get<IOrder[]>("/orders").then((data) => {
-      setOrders(data.data);
-    });
-  }, []);
+    if (paths.includes(path)) return;
+
+    setOrdersLoading(true);
+
+    api
+      .get<IOrder[]>("/orders")
+      .then(({ data }) => setOrders(data))
+      .finally(() => setOrdersLoading(false));
+  }, [path]);
 
   async function handleCreateNewOrder(data: OrderInputs) {
     try {
@@ -67,7 +79,6 @@ export function OrderProvider({ children }: OrderProviderProps) {
       const order: IOrder = response;
 
       setOrders((state: IOrder[]) => [...state, order]);
-
       toast.success("Pedido cadastrado com sucesso");
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -81,9 +92,9 @@ export function OrderProvider({ children }: OrderProviderProps) {
       const { data: response } = await api.put(`/orders/${orderId}`, data);
       const orderUpdatted: IOrder = response;
 
-      const newOrders = orders.map((order: IOrder) => {
-        return order.id === orderUpdatted.id ? orderUpdatted : order;
-      });
+      const newOrders = orders.map((order: IOrder) =>
+        order.id === orderUpdatted.id ? orderUpdatted : order
+      );
 
       setOrders(newOrders);
       toast.success("Pedido atualizado");
@@ -108,11 +119,12 @@ export function OrderProvider({ children }: OrderProviderProps) {
     <OrderContext.Provider
       value={{
         orders,
+        ordersLoading,
+        currentOrder,
         handleCreateNewOrder,
         updateOrder,
         handleDeleteOrder,
         orderResume,
-        currentOrder,
         setCurrentOrder,
       }}
     >

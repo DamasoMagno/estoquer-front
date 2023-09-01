@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
 import { ModalProvider } from "@/contexts/useModal";
+import { OrderProvider } from "@/contexts/useOrder";
 
 const roboto = Roboto({
   weight: "400",
@@ -16,7 +17,6 @@ export const metadata: Metadata = {
 };
 
 import "./globals.css";
-import { OrderProvider } from "@/contexts/useOrder";
 
 export default function RootLayout({
   children,

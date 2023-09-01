@@ -2,7 +2,7 @@
 import { useState } from "react";
 import {
   flexRender,
-  getCoreRowModel,  
+  getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
   useReactTable,
@@ -26,7 +26,8 @@ import { Input } from "../ui/input";
 
 export function Orders() {
   const { onSetModalIsOpen } = useModal();
-  const { orders, handleDeleteOrder, setCurrentOrder } = useOrder();
+  const { orders, handleDeleteOrder, setCurrentOrder, ordersLoading } =
+    useOrder();
 
   const [filter, setFilter] = useState("");
 
@@ -45,8 +46,8 @@ export function Orders() {
     },
   });
 
-  function onSetModalCurrentOrder(orderId: string){
-    const order = orders.find(order => order.id === orderId);
+  function onSetModalCurrentOrder(orderId: string) {
+    const order = orders.find((order) => order.id === orderId);
     setCurrentOrder(order);
 
     onSetModalIsOpen(true);

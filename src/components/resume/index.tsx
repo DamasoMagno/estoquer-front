@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useOrder } from "@/contexts/useOrder";
 import { formattPrice } from "@/utils/formatt-price";
 
