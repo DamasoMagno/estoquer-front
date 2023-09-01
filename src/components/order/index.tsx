@@ -1,6 +1,6 @@
 "use client";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
@@ -46,6 +46,7 @@ export function Order() {
   const { modalIsOpen, onSetModalIsOpen } = useModal();
   const { handleCreateNewOrder, updateOrder, currentOrder, setCurrentOrder } =
     useOrder();
+  const [orderFinished, setOrderFinished] = useState(false);
 
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
@@ -58,14 +59,19 @@ export function Order() {
   });
 
   useEffect(() => {
+    setOrderFinished(false);
+
     if (!currentOrder) return;
 
     form.setValue("name", currentOrder.name);
     form.setValue("price", currentOrder.price);
     form.setValue("client", currentOrder.client);
-    form.setValue("finished", currentOrder.finished);
     form.setValue("type", currentOrder.type);
-  }, [modalIsOpen, form, currentOrder]);
+    form.setValue("finished", currentOrder.finished);
+
+    setOrderFinished(form.getValues("finished"));
+  }, [modalIsOpen, currentOrder]);
+
 
   function handleCloseModal() {
     form.reset();
@@ -178,6 +184,7 @@ export function Order() {
                 <FormItem>
                   <FormControl>
                     <Checkbox
+                      disabled={orderFinished}
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -187,7 +194,7 @@ export function Order() {
               )}
             />
 
-            <Button className="mt-4" type="submit">
+            <Button className="mt-4" type="submit" disabled={orderFinished}>
               Salvar
             </Button>
           </form>

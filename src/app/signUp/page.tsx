@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 export default function SignUp() {
   const router = useRouter();
@@ -29,23 +30,30 @@ export default function SignUp() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center px-4 flex-col gap-4 max-w-md mx-auto">
-      <Input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Digite seu email"
-        type="email"
-      />
+    <div className="h-screen max-w-md mx-auto px-12 flex justify-center items-center flex-col">
+      <h1 className="text-3xl bold">Criar conta</h1>
 
-      <Input
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Digite sua senha"
-      />
+      <form onSubmit={handleSignIn} className="w-full my-8 flex flex-col gap-4">
+        <Input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Digite seu email"
+          type="email"
+        />
 
-      <Button className="w-full" onClick={handleSignIn}>
-        Criar conta
-      </Button>
+        <Input
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Digite sua senha"
+          type="password"
+        />
+
+        <Button className="w-full" onClick={handleSignIn}>
+          Criar conta
+        </Button>
+      </form>
+
+      <Link href="/signIn">Entrar</Link>
     </div>
   );
 }

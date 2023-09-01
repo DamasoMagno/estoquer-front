@@ -61,18 +61,20 @@ export const columns: ColumnDef<IOrder>[] = [
   {
     accessorKey: "actions",
     header: () => <p className="text-center">Ações</p>,
-    cell: ({ row, table: { options } }) => {
+    cell: ({ row, table }) => {
+      const actions = table.options.meta;
+
       return (
         <div className="flex items-center justify-center">
           <Button
             variant="ghost"
-            onClick={() => options.meta?.onSetModalCurrentOrder(row.original.id)}
+            onClick={() => actions?.onSetModalCurrentOrder(row.original.id)}
           >
             <Edit size={18} />
           </Button>
           <Button
             variant="ghost"
-            onClick={() => options.meta?.onDeleteOrder(row.original.id)}
+            onClick={() => actions?.onDeleteOrder(row.original.id)}
           >
             <Trash size={18} />
           </Button>

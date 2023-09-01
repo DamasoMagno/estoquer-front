@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import { toast } from "react-hot-toast";
 
 import { IOrder } from "@/interfaces";
-import { api } from "@/lib/api";
+import { api } from "@/services/api";
 
 type OrderInputs = Omit<IOrder, "id">;
 
@@ -26,9 +26,9 @@ interface OrderContextProps {
   currentOrder: IOrder | null;
   orderResume: OrderResume;
   ordersLoading: boolean;
-  handleCreateNewOrder(data: OrderInputs): void;
-  updateOrder(orderId: string, data: OrderInputs): void;
-  handleDeleteOrder(orderId: string): void;
+  handleCreateNewOrder(data: OrderInputs): Promise<void>;
+  updateOrder(orderId: string, data: OrderInputs): Promise<void>;
+  handleDeleteOrder(orderId: string): Promise<void>;
   setCurrentOrder(order: any): void;
 }
 
@@ -41,7 +41,8 @@ const OrderContext = createContext({} as OrderContextProps);
 export function OrderProvider({ children }: OrderProviderProps) {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
-  const [ordersLoading, setOrdersLoading] = useState<boolean>(false);
+  const [ordersLoading, setOrdersLoading] = useState<boolean>(true);
+
   const path = usePathname();
 
   let orderResume: OrderResume = orders.reduce(
@@ -64,8 +65,6 @@ export function OrderProvider({ children }: OrderProviderProps) {
 
   useEffect(() => {
     if (paths.includes(path)) return;
-
-    setOrdersLoading(true);
 
     api
       .get<IOrder[]>("/orders")

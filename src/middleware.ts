@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
 
   if (!session.data.session) {
     console.log(session);
-    return NextResponse.redirect(new URL("/auth", req.url));
+    return NextResponse.redirect(new URL("/signIn", req.url));
   }
 
   return res;
