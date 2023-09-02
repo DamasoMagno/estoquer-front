@@ -54,6 +54,7 @@ export function Order() {
       client: "",
       name: "",
       price: 0,
+      type: "income",
       finished: false,
     },
   });
@@ -71,7 +72,6 @@ export function Order() {
 
     setOrderFinished(form.getValues("finished"));
   }, [modalIsOpen, currentOrder]);
-
 
   function handleCloseModal() {
     form.reset();
@@ -131,23 +131,9 @@ export function Order() {
                   <FormControl>
                     <Input
                       onChange={(e) => onChange(Number(e.target.value))}
+                      type="number"
                       {...rest}
                     />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="client"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    {form.watch("type") === "income" ? "Empresa" : "Cliente"}
-                  </FormLabel>
-                  <FormControl>
-                    <Input {...field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -165,7 +151,11 @@ export function Order() {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={selectTypes[field.value]} />
+                        <SelectValue
+                          placeholder={
+                            field.value === "income" ? "Entrada" : "Saída"
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -173,6 +163,21 @@ export function Order() {
                       <SelectItem value="outcome">Saidas</SelectItem>
                     </SelectContent>
                   </Select>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="client"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    {form.watch("type") === "income" ? "Empresa" : "Cliente"}
+                  </FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
                 </FormItem>
               )}
             />

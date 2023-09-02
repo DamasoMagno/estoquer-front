@@ -47,10 +47,15 @@ export function OrderProvider({ children }: OrderProviderProps) {
 
   let orderResume: OrderResume = orders.reduce(
     (initialValue, currentValue) => {
-      if (currentValue.type === "income" && currentValue.finished) {
-        initialValue.income += currentValue.price;
-      } else if (currentValue.type === "outcome" && currentValue.finished) {
-        initialValue.outcome += currentValue.price;
+      if (currentValue.finished) {
+        switch (currentValue.type) {
+          case "income":
+            initialValue.income += currentValue.price;
+            break;
+          case "outcome":
+            initialValue.outcome += currentValue.price;
+            break;
+        }
       }
 
       return initialValue;

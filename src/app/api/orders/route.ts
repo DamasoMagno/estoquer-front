@@ -60,6 +60,7 @@ export async function POST(req: Request) {
   const response = await supabase
     .from("orders")
     .insert(newOrder)
+    .eq("customerId", user?.id)
     .select()
     .single();
 
