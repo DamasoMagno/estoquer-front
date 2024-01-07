@@ -15,7 +15,7 @@ their orders.
 - [ ] should be able to filter orders
 
 # Figma Design
-[Design do projeto utilizado]([https://www.figma.com/file/wcIBO7XsuZrmNZlZuoyFao/EstoqueGo?type=design&node-id=0%3A1&mode=design&t=HxwhI67eSKKh0ANF-1](https://www.figma.com/file/l58oWqmFZmaV3KaY7NQULp/Estoquer?type=design&node-id=201%3A1532&mode=design&t=SEQsq7tiIjXYYUTI-1)https://www.figma.com/file/l58oWqmFZmaV3KaY7NQULp/Estoquer?type=design&node-id=201%3A1532&mode=design&t=SEQsq7tiIjXYYUTI-1)
+[Design do projeto utilizado](https://www.figma.com/file/wcIBO7XsuZrmNZlZuoyFao/EstoqueGo?type=design&node-id=0%3A1&mode=design&t=HxwhI67eSKKh0ANF-1](https://www.figma.com/file/l58oWqmFZmaV3KaY7NQULp/Estoquer?type=design&node-id=201%3A1532&mode=design&t=SEQsq7tiIjXYYUTI-1)https://www.figma.com/file/l58oWqmFZmaV3KaY7NQULp/Estoquer?type=design&node-id=201%3A1532&mode=design&t=SEQsq7tiIjXYYUTI-1)
 
 # Tecnologies
 
