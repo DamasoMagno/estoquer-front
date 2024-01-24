@@ -50,12 +50,12 @@ export function Order() {
 
   const form = useForm<Order>({
     resolver: zodResolver(orderSchema),
-    defaultValues: {
-      client: "",
-      name: "",
-      price: 0,
-      type: "income",
-      finished: false,
+    values: {
+      client: currentOrder?.client ?? "",
+      name: currentOrder?.name ?? "",
+      price: currentOrder?.price ?? 0,
+      type: currentOrder?.type ?? "income",
+      finished: currentOrder?.finished ?? false,
     },
   });
 
@@ -64,14 +64,8 @@ export function Order() {
 
     if (!currentOrder) return;
 
-    form.setValue("name", currentOrder.name);
-    form.setValue("price", currentOrder.price);
-    form.setValue("client", currentOrder.client);
-    form.setValue("type", currentOrder.type);
-    form.setValue("finished", currentOrder.finished);
-
     setOrderFinished(form.getValues("finished"));
-  }, [modalIsOpen, currentOrder]);
+  }, [modalIsOpen, currentOrder, form]);
 
   function handleCloseModal() {
     form.reset();
@@ -89,13 +83,8 @@ export function Order() {
       }
 
       handleCloseModal();
-    } catch (error) {}
+    } catch (error) { }
   }
-
-  const selectTypes = {
-    income: "Entrada",
-    outcome: "Saída",
-  };
 
   return (
     <Dialog open={modalIsOpen} onOpenChange={handleCloseModal}>
@@ -199,7 +188,7 @@ export function Order() {
               )}
             />
 
-            <Button className="mt-4" type="submit" disabled={orderFinished}>
+            <Button className="mt-4" disabled={orderFinished}>
               Salvar
             </Button>
           </form>

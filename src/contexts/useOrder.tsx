@@ -6,10 +6,11 @@ import {
   createContext,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { usePathname } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { Toaster, toast } from "sonner";
 
 import { IOrder } from "@/interfaces";
 import { api } from "@/services/api";
@@ -66,7 +67,9 @@ export function OrderProvider({ children }: OrderProviderProps) {
     }
   );
 
-  const paths = ["/auth", "/sign"];
+  const paths = useMemo(() => {
+    return ["/auth", "/sign"]
+  }, []);
 
   useEffect(() => {
     if (paths.includes(path)) return;
@@ -75,7 +78,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
       .get<IOrder[]>("/orders")
       .then(({ data }) => setOrders(data))
       .finally(() => setOrdersLoading(false));
-  }, [path]);
+  }, [path, paths]);
 
   async function handleCreateNewOrder(data: OrderInputs) {
     try {
@@ -102,7 +105,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
 
       setOrders(newOrders);
       toast.success("Pedido atualizado");
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async function handleDeleteOrder(orderId: string) {
@@ -116,7 +119,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
       setOrders(ordersFilteredById);
 
       toast.success("Pedido removido do sistema");
-    } catch (error) {}
+    } catch (error) { }
   }
 
   return (
@@ -133,6 +136,7 @@ export function OrderProvider({ children }: OrderProviderProps) {
       }}
     >
       {children}
+      <Toaster position="top-center" />
     </OrderContext.Provider>
   );
 }
