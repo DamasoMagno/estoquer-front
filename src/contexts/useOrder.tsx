@@ -40,15 +40,17 @@ interface OrderProviderProps {
 const OrderContext = createContext({} as OrderContextProps);
 
 export function OrderProvider({ children }: OrderProviderProps) {
+  const path = usePathname();
+
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [currentOrder, setCurrentOrder] = useState<IOrder | null>(null);
   const [ordersLoading, setOrdersLoading] = useState<boolean>(true);
 
-  const path = usePathname();
+  console.log(orders)
 
   let orderResume: OrderResume = orders.reduce(
     (initialValue, currentValue) => {
-      if (currentValue.finished) {
+      if (currentValue?.finished) {
         switch (currentValue.type) {
           case "income":
             initialValue.income += currentValue.price;
@@ -82,8 +84,8 @@ export function OrderProvider({ children }: OrderProviderProps) {
 
   async function handleCreateNewOrder(data: OrderInputs) {
     try {
-      const { data: response } = await api.post("/orders", data);
-      const order: IOrder = response;
+      const response = await api.post("/orders", data);
+      const order: IOrder = response.data;
 
       setOrders((state: IOrder[]) => [...state, order]);
       toast.success("Pedido cadastrado com sucesso");

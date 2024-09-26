@@ -34,36 +34,40 @@ export async function GET() {
     .select()
     .eq("customerId", user?.id);
 
-  const orders = response.data as IOrder[] ?? [];
+  const orders = (response.data as IOrder[]) ?? [];
   return NextResponse.json(orders as IOrder[]);
 }
 
 export async function POST(req: Request) {
-  const data = await req.json();
-  const supabase = createRouteHandlerClient({ cookies });
+  try {
+    const data = await req.json();
+    const supabase = createRouteHandlerClient({ cookies });
 
-  const { name, client, price, finished, type } = orderBodySchema.parse(data);
+    const { name, client, price, finished, type } = orderBodySchema.parse(data);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const newOrder: OrderInputs = {
-    name,
-    client,
-    finished,
-    price,
-    type,
-    customerId: String(user?.id)
+    const newOrder: OrderInputs = {
+      name,
+      client,
+      finished,
+      price,
+      type,
+      customerId: String(user?.id),
+    };
+
+    const response = await supabase
+      .from("orders")
+      .insert(newOrder)
+      .eq("customerId", user?.id)
+      .select()
+      .single();
+
+    const order: IOrder = response.data;
+    return NextResponse.json(order);
+  } catch (error) {
+    console.log(error);
   }
-
-  const response = await supabase
-    .from("orders")
-    .insert(newOrder)
-    .eq("customerId", user?.id)
-    .select()
-    .single();
-
-  const order: IOrder = response.data;
-  return NextResponse.json(order);
 }

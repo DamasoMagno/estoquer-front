@@ -15,21 +15,21 @@ export const columns: ColumnDef<IOrder>[] = [
     accessorKey: "name",
     header: "Pedido",
     cell: ({ row }) => (
-      <p className="text-left font-medium">{row.getValue("name")}</p>
+      <p className="text-left font-medium">{row?.getValue("name")}</p>
     ),
   },
   {
     accessorKey: "client",
     header: "Cliente",
     cell: ({ row }) => (
-      <div className="text-left font-medium">{row.getValue("client")}</div>
+      <div className="text-left font-medium">{row?.getValue("client")}</div>
     ),
   },
   {
     accessorKey: "price",
     header: "Valor",
     cell: ({ row }) => {
-      const amount = Number(row.getValue("price"));
+      const amount = Number(row?.getValue("price"));
       return (
         <div className="text-left font-medium">{formattPrice(amount)}</div>
       );
@@ -40,7 +40,7 @@ export const columns: ColumnDef<IOrder>[] = [
     header: "Tipo",
     cell: ({ row }) => {
       const orderCategory =
-        row.getValue("type") === "income" ? "Entrada" : "Saída";
+        row?.getValue("type") === "income" ? "Entrada" : "Saída";
 
       return <div>{orderCategory}</div>;
     },
@@ -49,11 +49,11 @@ export const columns: ColumnDef<IOrder>[] = [
     accessorKey: "finished",
     header: "Status",
     cell: ({ row }) => {
-      const orderPendent = !row.getValue("finished");
+      const orderPendent = !row?.getValue("finished");
 
       return (
         <Badge className={cn({ "bg-red-500": orderPendent })}>
-          {row.getValue("finished") ? "finalizado" : "pendente"}
+          {row?.getValue("finished") ? "finalizado" : "pendente"}
         </Badge>
       );
     },
@@ -68,13 +68,13 @@ export const columns: ColumnDef<IOrder>[] = [
         <div className="flex items-center justify-center">
           <Button
             variant="ghost"
-            onClick={() => actions?.onSetModalCurrentOrder(row.original.id)}
+            onClick={() => actions?.onSetModalCurrentOrder(row?.original.id)}
           >
             <Edit size={18} />
           </Button>
           <Button
             variant="ghost"
-            onClick={() => actions?.onDeleteOrder(row.original.id)}
+            onClick={() => actions?.onDeleteOrder(row?.original.id)}
           >
             <Trash size={18} />
           </Button>

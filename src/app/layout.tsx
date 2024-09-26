@@ -1,3 +1,5 @@
+import "./globals.css";
+
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 
@@ -15,8 +17,6 @@ export const metadata: Metadata = {
     "Gerencie seu controle de gastos de maneira simples, prática e fácil aqui.",
   icons: ["logo.png"],
 };
-
-import "./globals.css";
 
 export default function RootLayout({
   children,
